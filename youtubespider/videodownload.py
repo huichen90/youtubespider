@@ -55,13 +55,6 @@ class VdieoDownload(object):
                     self.video_category = row[9]
                     self.tags = row[10]
                     self.task_id = row[11]
-                    # keywords = row[2]
-                    # upload_time = row[3]
-                    # spider_time = row[4]
-                    # url = row[5]
-                    # # 打印''结果
-                    # print("id=%s,title=%s,keywords=%s,upload_time=%s,spider_time=%s,url=%s" % \
-                    #       (id, title,  keywords,upload_time,spider_time,url))
                     print(row)
         except:
             print("Error: unable to fetch data")
@@ -82,7 +75,7 @@ class VdieoDownload(object):
         self.dt = datetime.datetime.now().strftime("%Y-%m-%d")
         options = {}
         options['retries'] = 5
-        options['proxy'] = 'http://127.0.0.1:8118'
+        # options['proxy'] = 'http://127.0.0.1:8118'
         options['outtmpl'] = self.keywords+"/"+self.dt+ "/"+self.title+'.%(ext)s'
         ydl = youtube_dl.YoutubeDL( options)
 
