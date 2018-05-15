@@ -14,7 +14,7 @@ from youtubespider.videodownload import VdieoDownload
 
 class Youtubespiderv2Pipeline(object):
     def process_item(self, item, spider):
-        db = pymysql.connect("10.168.103.90", "root", "root", "test", charset='utf8')
+        db = pymysql.connect("127.0.0.1", "root", "root", "test", charset='utf8')
         d = VdieoDownload(db=db)
         d.Automatic_download(time=item['limit_time'])
         # 关闭数据库连接
