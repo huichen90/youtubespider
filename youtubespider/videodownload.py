@@ -92,7 +92,7 @@ class VdieoDownload(object):
         self.videojson["title"] = self.title
         self.videojson["title_cn"]=''
         self.videojson["upload_time"] = self.upload_time
-        self.videojson["spider_time"] = self.spider_time.strftime('%Y-%m-%d')
+        self.videojson["spider_time"] = self.spider_time
         self.videojson["url"] = self.url
         self.videojson["info"] = self.info
         self.videojson["info_cn"] =''
