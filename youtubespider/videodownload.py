@@ -13,11 +13,11 @@ import time
 class VdieoDownload(object):
     """download videos """
 
-    def __init__(self,db):
+    def __init__(self,db,cursor):
         self.db=db
         self.url = ''
         self.title = ''
-        self.cursor = self.db.cursor()
+        self.cursor = cursor
         self.videojson = {}
         self.play_count = ''
         self.keywords = ''
@@ -29,15 +29,13 @@ class VdieoDownload(object):
         move = dict.fromkeys((ord(c) for c in u"\xa0\n\t"))
         outstring = instring.translate(move)
         return outstring
-    def _Query(self,time):
+    def _Query(self):
         # 使用cursor()方法获取操作游标
 
-        # SQL 查询语句 每次取出一条
         sql = "select title,url,play_count,keywords,info,upload_time,spider_time,video_time,site_name,video_category,tags,task_id" \
               " from videoitems " \
-              "where isdownload =0 and video_time <%d limit 0,1 " %time
-        print(time)
-        print(sql)
+              "where isdownload =0 limit 0,1 "
+
         try:
             self.cursor.execute(sql)
             # 获取所有记录列表
@@ -132,27 +130,26 @@ class VdieoDownload(object):
             # 发生错误时回滚
             print(e)
             self.db.rollback()
-    def Automatic_download(self,time):
+    def Automatic_download(self):
         import threading
         l = threading.Lock()
         l.acquire()
-        self._Query(time)
+        self._Query()
         self.UpdateStatus(num=1)
-        if self.url !='':
-            try:
+        try:
                 self.Download()
-                self.WriteJson()
-                # self.AddVideoJson()
-
                 self.UpdateStatus(num=2)
-            except Exception as e:
+                self.WriteJson()
+                #self.AddVideoJson()
+
+        except EOFError as e:
                 print(e)
                 print('下载失败')
                 self.UpdateStatus(num=3)
 
         l.release()
 
-    def Traditional2Simplified(sentence):
+    def Traditional2Simplified(self,sentence):
         '''
         将sentence中的繁体字转为简体字
         :param sentence: 待转换的句子
@@ -165,7 +162,7 @@ class VdieoDownload(object):
 
 if __name__ == '__main__':
     db = pymysql.connect("localhost", "root", "root", "test",charset='utf8')
-    d = VdieoDownload(db=db)
+    d = VdieoDownload(db=db,cursor=db.cursor())
     d.Automatic_download()
     # 关闭数据库连接
     db.close()
