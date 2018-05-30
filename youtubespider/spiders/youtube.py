@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
+
+import re
 import scrapy
 import time
 
@@ -9,11 +11,13 @@ from youtubespider.langconv import Converter
 
 class YoutubeSpider(scrapy.Spider):
     name = 'youtube'
-    def __init__(self,keywords = '金正恩',limit=800,taskId = 2,*args,**kwargs):
+    def __init__(self,keywords = '金正恩',limit=800,taskId = 2,startDate=int(time.time())-3600*48,endDate=int(time.time()),*args,**kwargs):
         super(YoutubeSpider, self).__init__(*args, **kwargs)
         self.keywords = keywords
         self.task_id = taskId
         self.limit_time =int(limit)
+        self.start_date = startDate
+        self.end_date = endDate
         self.allowed_domains = ['www.youtube.com']
         self.url1 = 'http://www.youtube.com/results?sp=EgIIBA%253D%253D&search_query='+self.keywords+'&pbj=1&page='
         self.page = 1
@@ -80,7 +84,8 @@ class YoutubeSpider(scrapy.Spider):
                                         ['rows'][0]['metadataRowRenderer']['contents'][0]['runs'][0]['text']  #视频的分类
 
         item['upload_time'] = json.loads(response.text)[3]['response']['contents']['twoColumnWatchNextResults']['results']['results']\
-                                        ['contents'][1]['videoSecondaryInfoRenderer']['dateText']['simpleText'][0:-2]  #视频上传时间，精确到天
+                                        ['contents'][1]['videoSecondaryInfoRenderer']['dateText']['simpleText'][0:-1]  #视频上传时间，精确到天
+        item['upload_time'] =  self.dts2ts(re.search(r"(\d{4}年\d{1,2}月\d{1,2}日)",item['upload_time']).group(0)) #利用正则表达式将日期准确提取出来
         item['play_count'] = obj.get('viewCount','')           #视频的点击量
 
         yield item
@@ -94,18 +99,22 @@ class YoutubeSpider(scrapy.Spider):
         return outstring
 
 
-    def Traditional2Simplified(sentence,s):
+    def Traditional2Simplified(self,s):
         '''
         将sentence中的繁体字转为简体字
         :param sentence: 待转换的句子
         :return: 将句子中繁体字转换为简体字之后的句子
         '''
-        print(sentence)
-        print(s)
-
         s = Converter('zh-hans').convert(s)
-
         return s
+
+    def dts2ts(self,datestr):
+        '''datestring translate to timestamp'''
+
+        timeArray = time.strptime(datestr, "%Y年%m月%d日")
+        timeStamp = int(time.mktime(timeArray))
+        return timeStamp
+
     def close(self, spider):
          # 当爬虫退出的时候 关闭chrome
          import datetime
