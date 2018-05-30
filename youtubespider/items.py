@@ -23,3 +23,5 @@ class Youtubespiderv2Item(scrapy.Item):
     video_category = scrapy.Field()
     limit_time = scrapy.Field()
     task_id = scrapy.Field()
+    start_date = scrapy.Field()
+    end_date = scrapy.Field()
