@@ -55,7 +55,8 @@ class YoutubeSpider(scrapy.Spider):
     def parse_info(self, response):
         # 获取传过来的参数
         item = response.meta['item']
-
+        item['start_date'] = self.start_date
+        item['end_date'] = self.end_date
         obj = json.loads(response.text)[3]['playerResponse']['videoDetails']
         item['url'] = 'https://www.youtube.com/watch?v='+obj['videoId']
 
