@@ -10,6 +10,7 @@ import logging
 import pymysql
 from scrapy.utils.project import get_project_settings
 
+from youtubespider.translate import Translate
 from youtubespider.videodownload import VdieoDownload
 
 class Mysql(object):
@@ -76,6 +77,8 @@ class MysqlPipeline(Mysql):
             item['upload_time'] = self.ts2dts(item['upload_time'])
             # dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             dt = datetime.datetime.now().strftime("%Y-%m-%d")
+            t = Translate(q=item['title'])
+            item['title'] = t.translate()
             sql = 'insert into videoitems(title,keywords,spider_time,url,site_name,video_time,' \
                   'play_count,upload_time,info,video_category,tags,task_id,isdownload)' \
                   ' values( "%s","%s","%s","%s", "%s" ,"%s","%s", "%s", "%s","%s","%s","%s",0)' \
