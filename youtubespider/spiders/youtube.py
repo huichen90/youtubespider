@@ -44,7 +44,7 @@ class YoutubeSpider(scrapy.Spider):
                 yield scrapy.Request(url=item['url'], callback=self.parse_info, meta={'item': item})
         self.page += 1
 
-        if self.page <= 5:
+        if self.page <= 10:
             print("开始爬去第%d页" % self.page)
             url = self.url1 + str(self.page)
             time.sleep(5)
