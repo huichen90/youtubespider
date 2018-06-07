@@ -1,7 +1,9 @@
 asn1crypto==0.24.0
 attrs==18.1.0
 Automat==0.6.0
+certifi==2018.4.16
 cffi==1.11.5
+chardet==3.0.4
 constantly==15.1.0
 cryptography==2.2.2
 cssselect==1.0.3
@@ -17,10 +19,15 @@ PyDispatcher==2.0.5
 PyMySQL==0.8.1
 pyOpenSSL==17.5.0
 queuelib==1.5.0
+requests==2.18.4
 Scrapy==1.5.0
+scrapyd==1.2.0
+scrapyd-client==1.1.0
 service-identity==17.0.0
 six==1.11.0
 Twisted==18.4.0
+urllib3==1.22
 w3lib==1.19.0
+you-get==0.4.1077
 youtube-dl==2018.5.9
 zope.interface==4.5.0
