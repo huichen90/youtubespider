@@ -71,13 +71,13 @@ class MysqlPipeline(Mysql):
         # 重复
         if repetition:
             print("此条重复抓取，没有存入数据库")
-        elif int(item['video_time']) > int(item['limit_time']):
-            print('视频时间太长了，没有存入数据库')
-        elif int(item['upload_time']) >= int(item['start_date']) and int(item['upload_time']) <= int(item['end_date']):
+        elif int(item['video_time_long']) < int(item['video_time']) < int(item['video_time_short']):
+            print('视频时间不满足要求')
+        elif int(item['start_date']) <= int(item['upload_time']) <= int(item['end_date']):
             item['upload_time'] = self.ts2dts(item['upload_time'])
             # dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             dt = datetime.datetime.now().strftime("%Y-%m-%d")
-            t = Translate(q=item['title'])
+            t = Translate(q=item['title'])  # 翻译
             item['title'] = t.translate()
             sql = 'insert into videoitems(title,keywords,spider_time,url,site_name,video_time,' \
                   'play_count,upload_time,info,video_category,tags,task_id,isdownload)' \
@@ -93,7 +93,11 @@ class MysqlPipeline(Mysql):
         return item
 
     def ts2dts(self, timeStamp):
-        '''timestamp translate to datestring'''
+        """
+        timestamp translate to datestring
+        :param timeStamp:
+        :return:
+        """
         import time
         timeArray = time.localtime(timeStamp)
         datestr = time.strftime("%Y-%m-%d", timeArray)
