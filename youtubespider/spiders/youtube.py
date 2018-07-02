@@ -140,7 +140,7 @@ class YoutubeSpider(scrapy.Spider):
         path = os.getcwd()  # 获取当前路径
         count = 0
         sizes = 0
-        for root, dirs, files in os.walk(path + "/" + self.keywords + "/" + dt):  # 遍历统计
+        for root, dirs, files in os.walk(path + "/cetc_data_producer/videos/" + self.keywords + "/" + dt):  # 遍历统计
             for each in files:
                 size = os.path.getsize(os.path.join(root, each))  # 获取文件大小
                 sizes += size
@@ -156,6 +156,6 @@ class YoutubeSpider(scrapy.Spider):
         videojson['file_size'] = str(sizes) + 'M'
         dt = datetime.datetime.now().strftime("%Y-%m-%d")
         videojson = json.dumps(videojson, ensure_ascii=False)
-        with open('videos/' + self.keywords + "/" + dt + "/" + "task_info.json", 'w', encoding='utf-8') as fq:
+        with open('cetc_data_producer/videos/' + self.keywords + "/" + dt + "/" + "task_info.json", 'w', encoding='utf-8') as fq:
             fq.write(videojson)
         print("spider closed")
