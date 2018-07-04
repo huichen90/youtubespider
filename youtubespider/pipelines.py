@@ -9,7 +9,7 @@ import logging
 
 import pymysql
 from scrapy.utils.project import get_project_settings
-
+from langdetect import detect
 from youtubespider.translate import Translate
 from youtubespider.videodownload import VdieoDownload
 
@@ -77,14 +77,17 @@ class MysqlPipeline(Mysql):
             item['upload_time'] = self.ts2dts(item['upload_time'])
             # dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             dt = datetime.datetime.now().strftime("%Y-%m-%d")
-            t = Translate(q=item['title'])  # 翻译
-            item['title'] = t.translate()
+            if detect(item['title']) != 'zh-cn':
+                t = Translate(q=item['title'])  # 翻译
+                item['title'], item['language'] = t.translate()
+            else:
+                item['language'] = '中文'
             sql = 'insert into videoitems(title,keywords,spider_time,url,site_name,video_time,' \
-                  'play_count,upload_time,info,video_category,tags,task_id,isdownload)' \
-                  ' values( "%s","%s","%s","%s", "%s" ,"%s","%s", "%s", "%s","%s","%s","%s",0)' \
+                  'play_count,upload_time,info,video_category,tags,task_id,isdownload,lg)' \
+                  ' values( "%s","%s","%s","%s", "%s" ,"%s","%s", "%s", "%s","%s","%s","%s",0,"%s")' \
                   % (item['title'], item['keywords'], dt, item['url'], item['site_name'], item['video_time'],
                      item["play_count"], item['upload_time'], item['info'],
-                     item['video_category'], item['tags'], item['task_id'],)
+                     item['video_category'], item['tags'], item['task_id'], item['language'])
             # 执行SQL语句
             self.cursor.execute(sql)
             self.conn.commit()

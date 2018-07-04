@@ -26,3 +26,4 @@ class Youtubespiderv2Item(scrapy.Item):
     task_id = scrapy.Field()
     start_date = scrapy.Field()
     end_date = scrapy.Field()
+    language = scrapy.Field()

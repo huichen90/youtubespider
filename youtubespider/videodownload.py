@@ -35,7 +35,8 @@ class VdieoDownload(object):
     def _Query(self):
         # 使用cursor()方法获取操作游标
 
-        sql = "select title,url,play_count,keywords,info,upload_time,spider_time,video_time,site_name,video_category,tags,task_id" \
+        sql = "select title,url,play_count,keywords,info,upload_time,spider_time,video_time,site_name,video_category," \
+              "tags,task_id,lg" \
               " from videoitems " \
               "where isdownload =0 limit 0,1 "
 
@@ -56,7 +57,7 @@ class VdieoDownload(object):
                 self.video_category = row[9]
                 self.tags = row[10]
                 self.task_id = row[11]
-                print(row)
+                self.language = row[12]
         except:
             print("Error: unable to fetch data")
 
@@ -104,6 +105,7 @@ class VdieoDownload(object):
         self.videojson["site_name_cn"] = self.site_name
         self.videojson["play_count"] = self.play_count
         self.videojson["section"] = self.video_category
+        self.videojson["video_lang"] = self.language
         # list2 = ','.join(self.tags)
         # simplified_sentence = self.Traditional2Simplified(list2)
         # self.tags = simplified_sentence.split(',')
