@@ -79,15 +79,16 @@ class MysqlPipeline(Mysql):
             dt = datetime.datetime.now().strftime("%Y-%m-%d")
             if detect(item['title']) != 'zh-cn':
                 t = Translate(q=item['title'])  # 翻译
-                item['title'], item['language'] = t.translate()
+                item['title_cn'], item['language'] = t.translate()
             else:
+                item['title_cn'] = item['title']
                 item['language'] = '中文'
             sql = 'insert into videoitems(title,keywords,spider_time,url,site_name,video_time,' \
-                  'play_count,upload_time,info,video_category,tags,task_id,isdownload,lg)' \
-                  ' values( "%s","%s","%s","%s", "%s" ,"%s","%s", "%s", "%s","%s","%s","%s",0,"%s")' \
+                  'play_count,upload_time,info,video_category,tags,task_id,isdownload,lg,title_cn)' \
+                  ' values( "%s","%s","%s","%s", "%s" ,"%s","%s", "%s", "%s","%s","%s","%s",0,"%s","%s")' \
                   % (item['title'], item['keywords'], dt, item['url'], item['site_name'], item['video_time'],
                      item["play_count"], item['upload_time'], item['info'],
-                     item['video_category'], item['tags'], item['task_id'], item['language'])
+                     item['video_category'], item['tags'], item['task_id'], item['language'], item['title_cn'])
             # 执行SQL语句
             self.cursor.execute(sql)
             self.conn.commit()

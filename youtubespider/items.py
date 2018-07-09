@@ -12,6 +12,7 @@ class Youtubespiderv2Item(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     title = scrapy.Field()
+    title_cn = scrapy.Field()
     keywords = scrapy.Field()
     tags = scrapy.Field()
     upload_time = scrapy.Field()

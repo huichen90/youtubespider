@@ -36,7 +36,7 @@ class VdieoDownload(object):
         # 使用cursor()方法获取操作游标
 
         sql = "select title,url,play_count,keywords,info,upload_time,spider_time,video_time,site_name,video_category," \
-              "tags,task_id,lg" \
+              "tags,task_id,lg,title_cn" \
               " from videoitems " \
               "where isdownload =0 limit 0,1 "
 
@@ -58,6 +58,7 @@ class VdieoDownload(object):
                 self.tags = row[10]
                 self.task_id = row[11]
                 self.language = row[12]
+                self.title_cn = row[13]
         except:
             print("Error: unable to fetch data")
 
@@ -95,7 +96,7 @@ class VdieoDownload(object):
             video = result
         self.videojson["task_id"] = self.task_id
         self.videojson["title"] = self.title
-        self.videojson["title_cn"] = ''
+        self.videojson["title_cn"] = self.title_cn
         self.videojson["upload_time"] = self.upload_time
         self.videojson["spider_time"] = self.spider_time
         self.videojson["url"] = self.url
