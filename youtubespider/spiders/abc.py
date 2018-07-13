@@ -9,12 +9,12 @@ from youtubespider.items import Youtubespiderv2Item
 from youtubespider.langconv import Converter
 
 
-class YoutubeSpider(scrapy.Spider):
-    name = '关键词采集'
+class AbcSpider(scrapy.Spider):
+    name = '美国广播公司'
 
-    def __init__(self, keywords='金正恩', video_time_long=1000, video_time_short=0, task_id=2,
+    def __init__(self, keywords='ABCnews',video_time_long=1000, video_time_short=0, task_id=2,
                  startDate=int(time.time()) - 3600 * 48, endDate=int(time.time()), *args, **kwargs):
-        super(YoutubeSpider, self).__init__(*args, **kwargs)
+        super(AbcSpider, self).__init__(*args, **kwargs)
         self.keywords = keywords
         self.task_id = task_id
         self.video_time_long = video_time_long
@@ -22,51 +22,62 @@ class YoutubeSpider(scrapy.Spider):
         self.upload_time_start_date = startDate
         self.upload_time_end_date = endDate
 
-        self.allowed_domains = ['www.youtube.com']
-        self.url1 = 'http://www.youtube.com/results?sp=EgIIBA%253D%253D&search_query=' + self.keywords + '&pbj=1&page='
         self.page = 1
-        self.start_urls = [self.url1 + '1']
+        self.allowed_domains = ['www.youtube.com']
+        self.start_urls = ['https://www.youtube.com/user/' + self.keywords + '/videos?pbj=1']
 
     def parse(self, response):
-        """
-        抽取相关的采集数据
-        :param response:
-        :return:
-        """
-
         item = Youtubespiderv2Item()
         item['video_time_long'] = self.video_time_long
         item['video_time_short'] = self.video_time_short
-        obj = json.loads(response.text)[1]['response']['contents']['twoColumnSearchResultsRenderer']['primaryContents']
-        videoRenderers = obj['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']
-        print(len(videoRenderers))
-        # exit()
-        for videoRenderer in videoRenderers:  # 视频列表
-            video = videoRenderer.get('videoRenderer', False)
-            if video:
-                videoId = video.get('videoId', '')  # 视频id
+        if self.page == 1:
+            obj = json.loads(response.text)[1]['response']['contents']['twoColumnBrowseResultsRenderer']['tabs'][1][
+                'tabRenderer'] \
+                ['content']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents'][0] \
+                ['gridRenderer']
+            items = obj['items']
+            continuations = obj['continuations'][0]['nextContinuationData']
+            ctoken = continuations['continuation']
+            continuation = continuations['continuation']
+            itct = continuations['clickTrackingParams']
+            next_page = 'https://www.youtube.com/browse_ajax?' + 'ctoken=' + ctoken + '&continuation=' + continuation + '&itct=' + itct
+            for video_list in items:
+                videoId = video_list['gridVideoRenderer']['videoId']
+
                 item['url'] = 'https://www.youtube.com/watch?v=' + videoId + '&pbj=1'  # 视频url
-                print(item['url'])
                 item['site_name'] = 'youtube'
                 item['keywords'] = self.keywords
                 item['task_id'] = self.task_id
 
                 yield scrapy.Request(url=item['url'], callback=self.parse_info, meta={'item': item})
-        self.page += 1
+            self.page += 1
+        else:
+            obj = json.loads(response.text)[1]['response']['continuationContents']['gridContinuation']
+            items = obj['items']
+            continuations = obj['continuations'][0]['nextContinuationData']
+            ctoken = continuations['continuation']
+            continuation = continuations['continuation']
+            itct = continuations['clickTrackingParams']
+            next_page = 'https://www.youtube.com/browse_ajax?' + 'ctoken=' + ctoken + '&continuation=' + continuation + '&itct=' + itct
+            for video_list in items:
+                videoId = video_list['gridVideoRenderer']['videoId']
 
-        if self.page <= 10:
-            print("开始爬去第%d页" % self.page)
-            url = self.url1 + str(self.page)
-            time.sleep(5)
-            # 再次发送请求
+                item['url'] = 'https://www.youtube.com/watch?v=' + videoId + '&pbj=1'  # 视频url
+                item['site_name'] = 'youtube'
+                item['keywords'] = self.keywords
+                item['task_id'] = self.task_id
 
-            yield scrapy.Request(url=url, callback=self.parse)
+                yield scrapy.Request(url=item['url'], callback=self.parse_info, meta={'item': item})
+            self.page += 1
+        if self.page <= 3:
+            yield scrapy.Request(url=next_page, callback=self.parse)
 
     def parse_info(self, response):
         # 获取传过来的参数
         item = response.meta['item']
         item['start_date'] = self.upload_time_start_date
         item['end_date'] = self.upload_time_end_date
+
         obj = json.loads(response.text)[3]['playerResponse']['videoDetails']
         item['url'] = 'https://www.youtube.com/watch?v=' + obj['videoId']
 
@@ -96,6 +107,7 @@ class YoutubeSpider(scrapy.Spider):
             ['contents'][1]['videoSecondaryInfoRenderer']['dateText']['simpleText'][0:-1]  # 视频上传时间，精确到天
         item['upload_time'] = self.dts2ts(
             re.search(r"(\d{4}年\d{1,2}月\d{1,2}日)", item['upload_time']).group(0))  # 利用正则表达式将日期准确提取出来
+
         item['play_count'] = obj.get('viewCount', '')  # 视频的点击量
 
         yield item
@@ -126,7 +138,6 @@ class YoutubeSpider(scrapy.Spider):
         :param datestr:
         :return:
         """
-
         timeArray = time.strptime(datestr, "%Y年%m月%d日")
         timeStamp = int(time.mktime(timeArray))
         return timeStamp

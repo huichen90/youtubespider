@@ -80,7 +80,8 @@ class VdieoDownload(object):
         options = {}
         options['retries'] = 5
         # options['proxy'] = 'http://127.0.0.1:8118'
-        options['outtmpl'] = 'cetc_data_producer/videos/' + self.keywords + "/" + self.dt + "/" + self.title + '.%(ext)s'
+        options['outtmpl'] = 'cetc_data_producer/videos/' + self.keywords.replace(' ', '_') + "/" + self.dt + "/" +\
+                             self.title + '.%(ext)s'
         ydl = youtube_dl.YoutubeDL(options)
 
         with ydl:
@@ -119,7 +120,7 @@ class VdieoDownload(object):
 
     def WriteJson(self):
         videojson = json.dumps(self.videojson, ensure_ascii=False)
-        with open('cetc_data_producer/videos/' + self.keywords + "/" + self.dt + "/" + self.videojson['title'] + ".json", 'w',
+        with open('cetc_data_producer/videos/' + self.keywords.replace(' ', '_') + "/" + self.dt + "/" + self.videojson['title'] + ".json", 'w',
                   encoding='utf-8') as fq:
             fq.write(videojson)
 
