@@ -13,7 +13,7 @@ class YoutubeSpider(scrapy.Spider):
     name = '关键词采集'
 
     def __init__(self, keywords='金正恩', video_time_long=1000, video_time_short=0, task_id=2,
-                 startDate=int(time.time()) - 3600 * 48, endDate=int(time.time()), *args, **kwargs):
+                 startDate=int(time.time()) - 3600 * 48 *7, endDate=int(time.time()), *args, **kwargs):
         super(YoutubeSpider, self).__init__(*args, **kwargs)
         self.keywords = keywords
         self.task_id = task_id
@@ -23,7 +23,7 @@ class YoutubeSpider(scrapy.Spider):
         self.upload_time_end_date = endDate
 
         self.allowed_domains = ['www.youtube.com']
-        self.url1 = 'http://www.youtube.com/results?sp=EgIIBA%253D%253D&search_query=' + self.keywords + '&pbj=1&page='
+        self.url1 = 'http://www.youtube.com/results?sp=CAISBAgDEAFCBAgBEgA%253D&search_query=' + self.keywords + '&pbj=1&page='
         self.page = 1
         self.start_urls = [self.url1 + '1']
 

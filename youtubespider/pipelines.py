@@ -73,7 +73,7 @@ class MysqlPipeline(Mysql):
             print("此条重复抓取，没有存入数据库")
         elif int(item['video_time_long']) < int(item['video_time']) < int(item['video_time_short']):
             print('视频时间不满足要求')
-        elif int(item['start_date']) <= int(item['upload_time']) <= int(item['end_date']):
+        elif int(float(item['start_date'])) <= int(float(item['upload_time'])) <= int(float(item['end_date'])):
             item['upload_time'] = self.ts2dts(item['upload_time'])
             # dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             dt = datetime.datetime.now().strftime("%Y-%m-%d")

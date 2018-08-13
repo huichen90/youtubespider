@@ -108,9 +108,7 @@ class VdieoDownload(object):
         self.videojson["play_count"] = self.play_count
         self.videojson["section"] = self.video_category
         self.videojson["video_lang"] = self.language
-        # list2 = ','.join(self.tags)
-        # simplified_sentence = self.Traditional2Simplified(list2)
-        # self.tags = simplified_sentence.split(',')
+
         if self.tags == "['']":
             self.videojson["keywords"] = []
         else:
