@@ -146,12 +146,15 @@ class AbcSpider(scrapy.Spider):
         # 当爬虫退出的时候 关闭chrome
         import datetime
         import os
-        dt = datetime.datetime.now().strftime("%Y-%m-%d")
+        from scrapy.utils.project import get_project_settings
 
+        dt = datetime.datetime.now().strftime("%Y-%m-%d")
+        settings = get_project_settings()
+        videos_save_dir = settings['VIDEOS_SAVE_DIR']
         path = os.getcwd()  # 获取当前路径
         count = 0
         sizes = 0
-        for root, dirs, files in os.walk(path + "/cetc_data_producer/videos/" + self.keywords.replace(' ', '_') + "/" + dt):  # 遍历统计
+        for root, dirs, files in os.walk(path + "/" + videos_save_dir + "/" + self.keywords.replace(' ', '_') + "/" + dt):  # 遍历统计
             for each in files:
                 size = os.path.getsize(os.path.join(root, each))  # 获取文件大小
                 sizes += size
@@ -167,7 +170,7 @@ class AbcSpider(scrapy.Spider):
         videojson['file_size'] = str(sizes) + 'M'
         dt = datetime.datetime.now().strftime("%Y-%m-%d")
         videojson = json.dumps(videojson, ensure_ascii=False)
-        with open('cetc_data_producer/videos/' + self.keywords.replace(' ', '_') + "/" + dt + "/" + "task_info.json",
+        with open(videos_save_dir + '/' + self.keywords.replace(' ', '_') + "/" + dt + "/" + "task_info.json",
                   'w', encoding='utf-8') as fq:
             fq.write(videojson)
         print("spider closed")

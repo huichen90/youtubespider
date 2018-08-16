@@ -19,7 +19,8 @@ NEWSPIDER_MODULE = 'youtubespider.spiders'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
-USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/64.0.3282.167 Chrome/64.0.3282.167 Safari/537.36'
+USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 ' \
+             '(KHTML, like Gecko) Ubuntu Chromium/64.0.3282.167 Chrome/64.0.3282.167 Safari/537.36'
 
 # LOG_LEVEL = 'ERROR'
 # LOG_LEVEL = 'INFO'
@@ -113,3 +114,5 @@ AUTOTHROTTLE_START_DELAY = 1
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+VIDEOS_SAVE_DIR = 'cetc_data_producer/videos'

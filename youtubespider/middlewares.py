@@ -102,6 +102,7 @@ class Youtubespiderv2DownloaderMiddleware(object):
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 
+
 class ProxyMiddleware(object):
     # 单个代理
 

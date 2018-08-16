@@ -13,6 +13,7 @@ from langdetect import detect
 from youtubespider.translate import Translate
 from youtubespider.videodownload import VdieoDownload
 
+
 class Mysql(object):
     """存储到数据库中"""
 
@@ -28,18 +29,19 @@ class Mysql(object):
         self.connect()
 
     def connect(self):
-        self.conn = pymysql.connect(host = self.host,
-                                    port = self.port,
-                                    user = self.user,
-                                    password = self.pwd,
-                                    db = self.name,
-                                    charset = self.charset)
+        self.conn = pymysql.connect(host=self.host,
+                                    port=self.port,
+                                    user=self.user,
+                                    password=self.pwd,
+                                    db=self.name,
+                                    charset=self.charset)
         self.cursor = self.conn.cursor()
 
 
     def colose_spider(self,spider):
         self.conn.close()
         self.cursor.close()
+
 
 class Youtubespiderv2Pipeline(Mysql):
     def process_item(self, item, spider):
@@ -50,6 +52,7 @@ class Youtubespiderv2Pipeline(Mysql):
             print(e)
             logging.error('下载失败 %s'%e)
         return item
+
 
 class MysqlPipeline(Mysql):
     """存储到数据库中"""
@@ -71,7 +74,8 @@ class MysqlPipeline(Mysql):
         # 重复
         if repetition:
             print("此条重复抓取，没有存入数据库")
-        elif int(item['video_time_long']) < int(item['video_time']) < int(item['video_time_short']):
+        elif int(item['video_time_long']) < int(item['video_time']) or \
+                int(item['video_time']) < int(item['video_time_short']):
             print('视频时间不满足要求')
         elif int(float(item['start_date'])) <= int(float(item['upload_time'])) <= int(float(item['end_date'])):
             item['upload_time'] = self.ts2dts(item['upload_time'])
@@ -90,8 +94,12 @@ class MysqlPipeline(Mysql):
                      item["play_count"], item['upload_time'], item['info'],
                      item['video_category'], item['tags'], item['task_id'], item['language'], item['title_cn'])
             # 执行SQL语句
-            self.cursor.execute(sql)
-            self.conn.commit()
+            try:
+                self.cursor.execute(sql)
+                self.conn.commit()
+                print('添加一条新数据')
+            except Exception as e:
+                print('存入数据库失败 %s', e)
         else:
             print('发布日期不符合要求，没有存入数据库')
         return item

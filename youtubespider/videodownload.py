@@ -5,6 +5,7 @@ import pymysql
 import datetime
 import youtube_dl
 import json
+from scrapy.utils.project import get_project_settings
 import time
 
 
@@ -13,6 +14,8 @@ import time
 
 class VdieoDownload(object):
     """download videos """
+    settings = get_project_settings()
+    videos_save_dir = settings['VIDEOS_SAVE_DIR']
 
     def __init__(self, db, cursor):
         self.db = db
@@ -80,7 +83,7 @@ class VdieoDownload(object):
         options = {}
         options['retries'] = 5
         # options['proxy'] = 'http://127.0.0.1:8118'
-        options['outtmpl'] = 'cetc_data_producer/videos/' + self.keywords.replace(' ', '_') + "/" + self.dt + "/" +\
+        options['outtmpl'] = self.videos_save_dir+'/' + self.keywords.replace(' ', '_') + "/" + self.dt + "/" +\
                              self.title + '.%(ext)s'
         ydl = youtube_dl.YoutubeDL(options)
 
@@ -118,7 +121,8 @@ class VdieoDownload(object):
 
     def WriteJson(self):
         videojson = json.dumps(self.videojson, ensure_ascii=False)
-        with open('cetc_data_producer/videos/' + self.keywords.replace(' ', '_') + "/" + self.dt + "/" + self.videojson['title'] + ".json", 'w',
+        with open(self.videos_save_dir+'/' + self.keywords.replace(' ', '_') +
+                  "/" + self.dt + "/" + self.videojson['title'] + ".json", 'w',
                   encoding='utf-8') as fq:
             fq.write(videojson)
 

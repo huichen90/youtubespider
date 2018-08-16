@@ -12,7 +12,7 @@ from youtubespider.langconv import Converter
 class YoutubeSpider(scrapy.Spider):
     name = '关键词采集'
 
-    def __init__(self, keywords='金正恩', video_time_long=1000, video_time_short=0, task_id=2,
+    def __init__(self, keywords='你好', video_time_long="1000", video_time_short="0", task_id=2,
                  startDate=int(time.time()) - 3600 * 48 *7, endDate=int(time.time()), *args, **kwargs):
         super(YoutubeSpider, self).__init__(*args, **kwargs)
         self.keywords = keywords
@@ -23,7 +23,7 @@ class YoutubeSpider(scrapy.Spider):
         self.upload_time_end_date = endDate
 
         self.allowed_domains = ['www.youtube.com']
-        self.url1 = 'http://www.youtube.com/results?sp=CAISBAgDEAFCBAgBEgA%253D&search_query=' + self.keywords + '&pbj=1&page='
+        self.url1 = 'http://www.youtube.com/results?sp=CAJCBAgBEgA%253D&search_query=' + self.keywords + '&pbj=1&page='
         self.page = 1
         self.start_urls = [self.url1 + '1']
 
@@ -135,12 +135,15 @@ class YoutubeSpider(scrapy.Spider):
         # 当爬虫退出的时候 关闭chrome
         import datetime
         import os
-        dt = datetime.datetime.now().strftime("%Y-%m-%d")
+        from scrapy.utils.project import get_project_settings
 
+        dt = datetime.datetime.now().strftime("%Y-%m-%d")
+        settings = get_project_settings()
+        videos_save_dir = settings['VIDEOS_SAVE_DIR']
         path = os.getcwd()  # 获取当前路径
         count = 0
         sizes = 0
-        for root, dirs, files in os.walk(path + "/cetc_data_producer/videos/" + self.keywords.replace(' ', '_') + "/" + dt):  # 遍历统计
+        for root, dirs, files in os.walk(path + "/" + videos_save_dir + "/" + self.keywords.replace(' ', '_') + "/" + dt):  # 遍历统计
             for each in files:
                 size = os.path.getsize(os.path.join(root, each))  # 获取文件大小
                 sizes += size
@@ -156,7 +159,7 @@ class YoutubeSpider(scrapy.Spider):
         videojson['file_size'] = str(sizes) + 'M'
         dt = datetime.datetime.now().strftime("%Y-%m-%d")
         videojson = json.dumps(videojson, ensure_ascii=False)
-        with open('cetc_data_producer/videos/' + self.keywords.replace(' ', '_') + "/" + dt + "/" + "task_info.json",
+        with open(videos_save_dir + '/' + self.keywords.replace(' ', '_') + "/" + dt + "/" + "task_info.json",
                   'w', encoding='utf-8') as fq:
             fq.write(videojson)
         print("spider closed")
