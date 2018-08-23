@@ -66,8 +66,7 @@ class MysqlPipeline(Mysql):
 
         # 查重处理
         self.cursor.execute(
-            """select * from videoitems where url = %s""",
-            item['url'])
+            """select * from videoitems where url = %s""" % item['url'])
         # 是否有重复数据
         repetition = self.cursor.fetchone()
 
