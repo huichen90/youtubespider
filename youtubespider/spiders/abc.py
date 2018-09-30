@@ -178,4 +178,10 @@ class AbcSpider(scrapy.Spider):
             fq.write(videojson)
         os.chmod(videos_save_dir + '/' + self.keywords.replace(' ', '_') + "/" + dt + "/" + "task_info.json",
                  stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
+        os.chmod(videos_save_dir + '/' + self.keywords.replace(' ', '_') + "/" + dt,
+                 stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
+        os.chmod(videos_save_dir + '/' + self.keywords.replace(' ', '_'),
+                 stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
+        os.chmod(videos_save_dir,
+                 stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
         print("spider closed")
