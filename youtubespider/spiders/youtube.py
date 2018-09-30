@@ -2,6 +2,8 @@
 import json
 
 import re
+import stat
+
 import scrapy
 import time
 
@@ -146,6 +148,7 @@ class YoutubeSpider(scrapy.Spider):
         for root, dirs, files in os.walk(path + "/" + videos_save_dir + "/" + self.keywords.replace(' ', '_') + "/" + dt):  # 遍历统计
             for each in files:
                 size = os.path.getsize(os.path.join(root, each))  # 获取文件大小
+                os.chmod(os.path.join(root, each), stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
                 sizes += size
                 count += 1  # 统计文件夹下文件个数
         count = count // 2
@@ -162,4 +165,6 @@ class YoutubeSpider(scrapy.Spider):
         with open(videos_save_dir + '/' + self.keywords.replace(' ', '_') + "/" + dt + "/" + "task_info.json",
                   'w', encoding='utf-8') as fq:
             fq.write(videojson)
+        os.chmod(videos_save_dir + '/' + self.keywords.replace(' ', '_') + "/" + dt + "/" + "task_info.json",
+                 stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
         print("spider closed")
