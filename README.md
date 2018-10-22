@@ -29,7 +29,10 @@ youtubespider
 
 ## 二、前期准备
 　设置数据库、创建数据表等在setting.py文件中
-##### 1　设置数据库连接地址
+##### 1　安装依赖包
+    pip install -r requirements.txt
+    回车
+##### 2　设置数据库连接地址
 ```python
 DB_HOST = "127.0.0.1"
 DB_PORT = 3306
@@ -39,12 +42,12 @@ DB_NAME = "spiderkeeper1"
 DB_CHARSET = "utf8"
 
 ```
-##### ２　设置视频文件的下载地址
+##### 3　设置视频文件的下载地址
 ```python
 VIDEOS_SAVE_DIR = 'cetc_data_producer/videos'
 
 ```
-##### ３　在相应的数据库中创建videoitems数据表
+##### 4　在相应的数据库中创建videoitems数据表
 ```mysql
      CREATE TABLE `videoitems` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
