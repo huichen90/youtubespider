@@ -9,7 +9,7 @@ youtubespider
         │  requirements.txt	    # 项目依赖包文件
         │  scrapy.cfg        	# 爬虫配置文件
         │      
-        ├─web
+        ├─spiders
         │   │  __init__.py
         │   │  abc.py       # ABCnews模块爬爬取规则
         │   │  youtube.py   # 关键词采集爬取规则
