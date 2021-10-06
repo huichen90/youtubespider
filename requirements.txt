@@ -21,7 +21,7 @@ PyMySQL==0.8.1
 pyOpenSSL==17.5.0
 queuelib==1.5.0
 requests==2.18.4
-Scrapy==1.5.0
+Scrapy==1.8.1
 scrapyd==1.2.0
 scrapyd-client==1.1.0
 service-identity==17.0.0
